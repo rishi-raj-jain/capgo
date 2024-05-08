@@ -644,7 +644,7 @@ export interface StatsActions {
   versionId?: number
 }
 
-export function sendStatsAndDevice(c: Context, device: DeviceWithoutCreatedAt, statsActions: StatsActions[]) {
+export async function sendStatsAndDevice(c: Context, device: DeviceWithoutCreatedAt, statsActions: StatsActions[]) {
   // Prepare the device data for insertion
   const deviceData = convertAllDatesToCH({ ...device, updated_at: new Date().toISOString() })
   const deviceReady = JSON.stringify(deviceData)
@@ -670,7 +670,8 @@ export function sendStatsAndDevice(c: Context, device: DeviceWithoutCreatedAt, s
     app_id: device.app_id,
     date: formatDateCH(new Date().toISOString()).split(' ')[0], // Extract the date part only
   })
-  createStatsDevices(c, device.app_id, device.device_id, device.version, device.platform ?? '', device.plugin_version ?? '', device.os_version ?? '', device.version_build ?? '', device.custom_id ?? '', device.is_prod ?? true, device.is_emulator ?? false)
+  // this should return immediately on cf and await on supabase edge fns
+  await createStatsDevices(c, device.app_id, device.device_id, device.version, device.platform ?? '', device.plugin_version ?? '', device.os_version ?? '', device.version_build ?? '', device.custom_id ?? '', device.is_prod ?? true, device.is_emulator ?? false)
 
   if (!isClickHouseEnabled(c))
     return Promise.resolve()
@@ -691,7 +692,7 @@ export function sendStatsAndDevice(c: Context, device: DeviceWithoutCreatedAt, s
   }
 
   if (executionCtx?.waitUntil)
-    return c.executionCtx.waitUntil(jobs)
-
-  return jobs
+    c.executionCtx.waitUntil(jobs)
+  else
+    await jobs
 }

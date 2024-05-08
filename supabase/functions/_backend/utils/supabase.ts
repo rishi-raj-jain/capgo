@@ -7,7 +7,7 @@ import { getEnv } from './utils.ts'
 import type { Person, Segments } from './plunk.ts'
 import { addDataContact } from './plunk.ts'
 import type { Order } from './types.ts'
-import { countFromClickHouse, readMauFromClickHouse, sendStatsAndDevice } from './clickhouse.ts'
+import { countFromClickHouse, isClickHouseEnabled, readMauFromClickHouse, sendStatsAndDevice } from './clickhouse.ts'
 import type { AppActivity } from './clickhouse.ts'
 
 export const EMPTY_UUID = '00000000-0000-0000-0000-000000000000'
@@ -485,7 +485,7 @@ export async function getSDevice(c: Context, auth: string, appId: string, versio
 
   const reqCount = count ? countFromClickHouse(c, 'devices_u', appId) : 0
   let req = client
-    .from('clickhouse_devices')
+    .from(isClickHouseEnabled(c) ? 'clickhouse_devices' : 'devices')
     .select()
     .eq('app_id', appId)
 
@@ -525,6 +525,7 @@ export async function getSDevice(c: Context, auth: string, appId: string, versio
       }
     })
   }
+  console.log(req)
   return Promise.all([reqCount, req.then(res => res.data || [])]).then(res => ({ count: res[0], data: res[1] }))
 
   // }
@@ -799,6 +800,25 @@ export function trackVersionUsage(
         action,
       },
     ])
+}
+
+export function trackDevices(c: Context, app_id: string, device_id: string, version_id: number, platform: string, plugin_version: string, os_version: string, version_build: string, custom_id: string, is_prod: boolean, is_emulator: boolean) {
+  return supabaseAdmin(c)
+    .from('devices')
+    .insert({
+      app_id,
+      created_at: new Date().toISOString(),
+      device_id,
+      updated_at: new Date().toISOString(),
+      version: version_id,
+      platform: platform as any,
+      os_version,
+      plugin_version,
+      version_build,
+      custom_id,
+      is_prod,
+      is_emulator,
+    }).then(da => console.log('???', da))
 }
 
 export async function trackDeviceUsage(

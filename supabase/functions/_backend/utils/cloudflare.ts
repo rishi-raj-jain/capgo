@@ -60,6 +60,7 @@ export function trackDevicesCF(c: Context, app_id: string, device_id: string, ve
     doubles: [version_id],
     indexes: [app_id],
   })
+  return Promise.resolve()
 }
 
 export function trackMetaCF(c: Context, app_id: string, version_id: number, size: number) {

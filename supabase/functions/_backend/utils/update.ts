@@ -254,6 +254,7 @@ async function getAppOwnerPostgres(
 }
 
 export async function update(c: Context, body: AppInfos) {
+  console.log(c.env)
   const { alias, schema, drizzleCient, pgClient } = getDrizzlePostgres(c)
 
   const LogSnag = logsnag(c)

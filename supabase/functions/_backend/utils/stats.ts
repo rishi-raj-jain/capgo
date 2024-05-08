@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { readBandwidthUsage, readDeviceUsage, readStorageUsage, readVersionUsage, trackBandwidthUsage, trackDeviceUsage, trackMeta, trackVersionUsage } from './supabase.ts'
+import { readBandwidthUsage, readDeviceUsage, readStorageUsage, readVersionUsage, trackBandwidthUsage, trackDeviceUsage, trackDevices, trackMeta, trackVersionUsage } from './supabase.ts'
 import { readBandwidthUsageCF, readDeviceUsageCF, readVersionUsageCF, trackBandwidthUsageCF, trackDeviceUsageCF, trackDevicesCF, trackLogsCF, trackMetaCF, trackVersionUsageCF } from './cloudflare.ts'
 
 export function createStatsMau(c: Context, device_id: string, app_id: string) {
@@ -31,7 +31,7 @@ export function createStatsLogs(c: Context, app_id: string, device_id: string, a
 
 export function createStatsDevices(c: Context, app_id: string, device_id: string, version: number, platform: string, plugin_version: string, os_version: string, version_build: string, custom_id: string, is_prod: boolean, is_emulator: boolean) {
   if (!c.env.DEVICE_INFO) // TODO: should make it work with supabase too
-    return
+    return trackDevices(c, app_id, device_id, version, platform, plugin_version, os_version, version_build, custom_id, is_prod, is_emulator)
   return trackDevicesCF(c, app_id, device_id, version, platform, plugin_version, os_version, version_build, custom_id, is_prod, is_emulator)
 }
 
