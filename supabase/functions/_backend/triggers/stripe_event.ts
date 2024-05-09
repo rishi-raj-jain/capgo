@@ -107,7 +107,7 @@ app.post('/', async (c: Context) => {
           channel: 'usage',
           event: 'User cancel',
           icon: '⚠️',
-          user_id: org.management_email,
+          user_id: org.id,
           notify: true,
         }).catch()
       }
