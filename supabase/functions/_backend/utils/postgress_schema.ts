@@ -81,7 +81,6 @@ export const version_info = pgTable('version_info', {
   enable_ab_testing: boolean('enable_ab_testing').default(false),
   allow_device_self_set: boolean('allow_device_self_set').default(false),
   public: boolean('public').default(false),
-  updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
 
 export const devices_override = pgTable('devices_override', {
