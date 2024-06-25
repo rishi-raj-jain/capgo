@@ -7,9 +7,11 @@ import VueDevTools from 'vite-plugin-vue-devtools'
 import WebfontDownload from 'vite-plugin-webfont-dl'
 import { VueRouterAutoImports } from 'unplugin-vue-router'
 import Vue from '@vitejs/plugin-vue'
+import ViteYaml from '@modyfi/vite-plugin-yaml'
 
 // import veauryVitePlugins from 'veaury/vite/index'
-import { defineConfig } from 'vite'
+// import { defineConfig } from 'vite'
+import { defineConfig } from '@farmfe/core'
 import VueRouter from 'unplugin-vue-router/vite'
 import Layouts from 'vite-plugin-vue-layouts'
 import Icons from 'unplugin-icons/vite'
@@ -45,7 +47,8 @@ export default defineConfig({
       '~/': `${path.resolve(__dirname, 'src')}/`,
     },
   },
-  plugins: [
+  vitePlugins: [
+    ViteYaml(),
     formkit({}),
 
     VueMacros({
