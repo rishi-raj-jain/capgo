@@ -167,12 +167,6 @@ export default defineConfig({
     }),
   ],
 
-  server: {
-    fs: {
-      strict: true,
-    },
-  },
-
   optimizeDeps: {
     include: [
       'vue',
